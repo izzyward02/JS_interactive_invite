@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Envelope Animation</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+    }
+    canvas {
+      border: 1px solid #ccc;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas" width="400" height="300"></canvas>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    let letterY = 220;
+    let envelopeOpen = false;
+    let messageShown = false;
+    let message = "You've got a message!";
+
+    // Function to draw the envelope (closed or open)
+    function drawEnvelope() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw the envelope body
+      ctx.fillStyle = '#f1c40f';
+      ctx.fillRect(100, 150, 200, 100);
+
+      // Draw the flap
+      ctx.fillStyle = '#e67e22';
+      ctx.beginPath();
+      ctx.moveTo(100, 150);
+      ctx.lineTo(200, envelopeOpen ? 50 : 150);  // Change position based on open state
+      ctx.lineTo(300, 150);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // Function to draw the letter rising up
+    function drawLetter() {
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(120, letterY, 160, 100);
+      ctx.strokeRect(120, letterY, 160, 100);
+    }
+
+    // Function to unfold and show the message
+    function displayMessage() {
+      ctx.font = '18px Arial';
+      ctx.fillStyle = '#2c3e50';
+      ctx.fillText(message, 130, 180);
+    }
+
+    // Animate the envelope opening and letter rising
+    function animateLetter() {
+      if (letterY > 100) {
+        letterY -= 2;
+        draw();
+        requestAnimationFrame(animateLetter);
+      } else {
+        setTimeout(() => {
+          messageShown = true;
+          draw();
+        }, 2000); // Delay before message unfolds
+      }
+    }
+
+    // Draw the envelope and letter
+    function draw() {
+      drawEnvelope();
+      if (envelopeOpen) {
+        drawLetter();
+      }
+      if (messageShown) {
+        displayMessage();
+      }
+    }
+
+    // Handle canvas click event to open the envelope
+    canvas.addEventListener('click', () => {
+      if (!envelopeOpen) {
+        envelopeOpen = true;
+        animateLetter();
+      }
+    });
+
+    // Initial draw
+    draw();
+  </script>
+</body>
+</html>
+
